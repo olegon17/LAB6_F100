@@ -51,7 +51,6 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_TIM6_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM7_Init(void);
 /* USER CODE BEGIN PFP */
@@ -94,15 +93,12 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
-  MX_TIM6_Init();
   MX_TIM2_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
   LL_ADC_EnableIT_EOS(ADC1);//?????????? ?????????? ?? ?????????? ?????????????? ? ???
   LL_ADC_Enable(ADC1);//????????? ???
   
-  LL_TIM_EnableIT_UPDATE(TIM6);
-  LL_TIM_EnableCounter(TIM6);
   LL_TIM_EnableIT_UPDATE(TIM7);
   LL_TIM_EnableCounter(TIM7);
   
@@ -120,25 +116,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    U0=RESULT1;
-    Uoc=RESULT2;
-    Xi=U0-Uoc;
-    Uy=Xi*Kp;
- LL_TIM_OC_SetCompareCH1(TIM2, 3000/*Uy*/);
- if(DISP_MODE==0)
- {
- D1=(RESULT1)/1000%10;
- D2=(RESULT1)/100%10;
- D3=(RESULT1)/10%10;
- D4=(RESULT1)/1%10;
- }
- if(DISP_MODE==1)
- {
- D1=(RESULT2)/1000%10;
- D2=(RESULT2)/100%10;
- D3=(RESULT2)/10%10;
- D4=(RESULT2)/1%10;
- }
+    
+ 
  
   }
   /* USER CODE END 3 */
@@ -218,7 +197,7 @@ static void MX_ADC1_Init(void)
   ADC_REG_InitStruct.TriggerSource = LL_ADC_REG_TRIG_SOFTWARE;
   ADC_REG_InitStruct.SequencerLength = 2;
   ADC_REG_InitStruct.SequencerDiscont = LL_ADC_REG_SEQ_DISCONT_DISABLE;
-  ADC_REG_InitStruct.ContinuousMode = LL_ADC_REG_CONV_SINGLE;
+  ADC_REG_InitStruct.ContinuousMode = LL_ADC_REG_CONV_CONTINUOUS;
   ADC_REG_InitStruct.DMATransfer = LL_ADC_REG_DMA_TRANSFER_NONE;
   LL_ADC_REG_Init(ADC1, &ADC_REG_InitStruct);
   /** Configure Regular Channel 
@@ -293,43 +272,6 @@ static void MX_TIM2_Init(void)
   LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   LL_GPIO_AF_RemapPartial2_TIM2();
-
-}
-
-/**
-  * @brief TIM6 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM6_Init(void)
-{
-
-  /* USER CODE BEGIN TIM6_Init 0 */
-
-  /* USER CODE END TIM6_Init 0 */
-
-  LL_TIM_InitTypeDef TIM_InitStruct = {0};
-
-  /* Peripheral clock enable */
-  LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
-
-  /* TIM6 interrupt Init */
-  NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
-  NVIC_EnableIRQ(TIM6_DAC_IRQn);
-
-  /* USER CODE BEGIN TIM6_Init 1 */
-
-  /* USER CODE END TIM6_Init 1 */
-  TIM_InitStruct.Prescaler = 7999;
-  TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 10;
-  LL_TIM_Init(TIM6, &TIM_InitStruct);
-  LL_TIM_DisableARRPreload(TIM6);
-  LL_TIM_SetTriggerOutput(TIM6, LL_TIM_TRGO_RESET);
-  LL_TIM_DisableMasterSlaveMode(TIM6);
-  /* USER CODE BEGIN TIM6_Init 2 */
-
-  /* USER CODE END TIM6_Init 2 */
 
 }
 

@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\STM32\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.general.xcl" --backend -f "D:\STM32\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Morozov\Documents\GitHub\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.general.xcl" --backend -f "C:\Users\Morozov\Documents\GitHub\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "D:\STM32\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.general.xcl" "--debug_file=%~1" --backend -f "D:\STM32\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.2\common\bin\cspybat" -f "C:\Users\Morozov\Documents\GitHub\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\Morozov\Documents\GitHub\LAB6_F100\EWARM\settings\LAB6_F100.LAB6_F100.driver.xcl" 
 
 @echo off 
 :end

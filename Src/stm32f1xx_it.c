@@ -218,18 +218,22 @@ void EXTI4_IRQHandler(void)
 void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
-  LL_ADC_ClearFlag_EOS(ADC1);//????? ????? ????????? ??????????????
+ // LL_ADC_ClearFlag_EOS(ADC1);//????? ????? ????????? ??????????????
   if (FLAG==0)
   {
-    RESULT1 = LL_ADC_REG_ReadConversionData12(ADC1);//in_8LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_1);//
+    //RESULT1 = READ_REG(ADC1->DR);
+      RESULT1 = LL_ADC_REG_ReadConversionData12(ADC1);
+      LL_ADC_REG_ReadConversionData12(ADC1);//in_8 READ_REG(ADC1->DR); LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_1);//
     FLAG=1;
   }
   else
   {
     if(FLAG==1)
     {
-      RESULT2 = LL_ADC_REG_ReadConversionData12(ADC1);//in_9LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_2);//
+      //RESULT2 = READ_REG(ADC1->DR);//LL_ADC_REG_ReadConversionData12(ADC1);//in_9 LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_2);//
+      RESULT2 = LL_ADC_REG_ReadConversionData12(ADC1);
       FLAG=0;
+      LL_ADC_ClearFlag_EOS(ADC1);
     }
   }
   
@@ -261,25 +265,34 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
   LL_TIM_ClearFlag_UPDATE(TIM2);
+  LL_ADC_REG_StartConversionSWStart(ADC1);//?????? ?????????????? ???
+  
+  //RESULT1 = LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_1);
+  
+  //RESULT2 = LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_2);
+    U0=RESULT1;
+    Uoc=RESULT2;
+    Xi=U0-Uoc;
+    Uy=Xi*Kp;
+ LL_TIM_OC_SetCompareCH3(TIM2, Uy);
+ if(DISP_MODE==0)
+ {
+ D1=(RESULT1)/1000%10;
+ D2=(RESULT1)/100%10;
+ D3=(RESULT1)/10%10;
+ D4=(RESULT1)/1%10;
+ }
+ if(DISP_MODE==1)
+ {
+ D1=(RESULT2)/1000%10;
+ D2=(RESULT2)/100%10;
+ D3=(RESULT2)/10%10;
+ D4=(RESULT2)/1%10;
+ }
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
   /* USER CODE END TIM2_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM6 global interrupt and DAC underrun error interrupts.
-  */
-void TIM6_DAC_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM6_DAC_IRQn 0 */
-  LL_TIM_ClearFlag_UPDATE(TIM6);
-  LL_ADC_REG_StartConversionSWStart(ADC1);//?????? ?????????????? ???
-  /* USER CODE END TIM6_DAC_IRQn 0 */
-  
-  /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
-
-  /* USER CODE END TIM6_DAC_IRQn 1 */
 }
 
 /**
