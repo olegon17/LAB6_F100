@@ -758,7 +758,7 @@
                     <item>RESULT1</item>
                     <item>RESULT2</item>
                     <item>ADC_RANG_1_2</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

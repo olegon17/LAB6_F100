@@ -57,7 +57,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern TIM_HandleTypeDef htim7;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -213,28 +213,30 @@ void EXTI4_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 channel1 global interrupt.
+  */
+void DMA1_Channel1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
+/**
   * @brief This function handles ADC1 global interrupt.
   */
 void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
- // LL_ADC_ClearFlag_EOS(ADC1);//????? ????? ????????? ??????????????
    if (ADC_RANG_1_2 == 0x00)
-  {RESULT1 = LL_ADC_REG_ReadConversionData12(ADC1);  // ?????? ?????????????? ??? 
- 
-  LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_9);
-  LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_9, LL_ADC_SAMPLINGTIME_13CYCLES_5);
-  ADC_RANG_1_2 = 0x01; 
-  LL_ADC_REG_StartConversionSWStart(ADC1);
-  }
+  {ADC32_1[0] = LL_ADC_REG_ReadConversionData12(ADC1); LL_ADC_REG_StartConversionSWStart(ADC1); // ?????? ?????????????? ??? 
+  ADC_RANG_1_2 = 0x01; }
    else
-  {RESULT2 = LL_ADC_REG_ReadConversionData12(ADC1); 
-   LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_1, LL_ADC_CHANNEL_8);
-   LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_8, LL_ADC_SAMPLINGTIME_13CYCLES_5);
-  
-  } //LL_ADC_REG_StopConversionExtTrig(ADC1);
-  
-  
+  {ADC32_1[1] = LL_ADC_REG_ReadConversionData12(ADC1); LL_ADC_REG_StartConversionSWStart(ADC1); }
   
   /* USER CODE END ADC1_IRQn 0 */
   /* USER CODE BEGIN ADC1_IRQn 1 */
@@ -263,29 +265,26 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
   LL_TIM_ClearFlag_UPDATE(TIM2);
-  LL_ADC_REG_StartConversionSWStart(ADC1);//?????? ?????????????? ???
+  LL_ADC_REG_StartConversionSWStart(ADC1); // zapusk preobrazovani^ ACP
   ADC_RANG_1_2 = 0x00; 
-  //RESULT1 = LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_1);
-  
-  //RESULT2 = LL_ADC_INJ_ReadConversionData12(ADC1, LL_ADC_REG_RANK_2);
-    U0=RESULT1;
-    Uoc=RESULT2;
+    U0=ADC32_1[0];
+    Uoc=ADC32_1[1];
     Xi=U0-Uoc;
     Uy=Xi*Kp;
  LL_TIM_OC_SetCompareCH3(TIM2, Uy);
  if(DISP_MODE==0)
  {
- D1=(RESULT1)/1000%10;
- D2=(RESULT1)/100%10;
- D3=(RESULT1)/10%10;
- D4=(RESULT1)/1%10;
+ D1=(ADC32_1[0])/1000%10;
+ D2=(ADC32_1[0])/100%10;
+ D3=(ADC32_1[0])/10%10;
+ D4=(ADC32_1[0])/1%10;
  }
  if(DISP_MODE==1)
  {
- D1=(RESULT2)/1000%10;
- D2=(RESULT2)/100%10;
- D3=(RESULT2)/10%10;
- D4=(RESULT2)/1%10;
+ D1=(ADC32_1[1])/1000%10;
+ D2=(ADC32_1[1])/100%10;
+ D3=(ADC32_1[1])/10%10;
+ D4=(ADC32_1[1])/1%10;
  }
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */
@@ -318,6 +317,7 @@ void TIM7_IRQHandler(void)
   }
   num++;
   /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
