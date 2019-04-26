@@ -57,7 +57,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern TIM_HandleTypeDef htim7;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -213,31 +213,13 @@ void EXTI4_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles DMA1 channel1 global interrupt.
-  */
-void DMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 1 */
-}
-
-/**
   * @brief This function handles ADC1 global interrupt.
   */
 void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
-   if (ADC_RANG_1_2 == 0x00)
-  {ADC32_1[0] = LL_ADC_REG_ReadConversionData12(ADC1); LL_ADC_REG_StartConversionSWStart(ADC1); // ?????? ?????????????? ??? 
-  ADC_RANG_1_2 = 0x01; }
-   else
-  {ADC32_1[1] = LL_ADC_REG_ReadConversionData12(ADC1); LL_ADC_REG_StartConversionSWStart(ADC1); }
-  
+  LL_ADC_ClearFlag_EOS(ADC1);//????? ????? ????????? ??????????????
+  ADC32_1[1] = LL_ADC_REG_ReadConversionData12(ADC1);
   /* USER CODE END ADC1_IRQn 0 */
   /* USER CODE BEGIN ADC1_IRQn 1 */
 
@@ -266,11 +248,15 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
   LL_TIM_ClearFlag_UPDATE(TIM2);
   LL_ADC_REG_StartConversionSWStart(ADC1); // zapusk preobrazovani^ ACP
-  ADC_RANG_1_2 = 0x00; 
+  ADC32_1[0]=INPUT;
     U0=ADC32_1[0];
     Uoc=ADC32_1[1];
     Xi=U0-Uoc;
-    Uy=Xi*Kp;
+    Uy=Xi*Kp+Uy;
+    if(Uy<0)
+      Uy=0;
+    if(Uy>3199)
+      Uy=3199;
  LL_TIM_OC_SetCompareCH3(TIM2, Uy);
  if(DISP_MODE==0)
  {
@@ -317,7 +303,6 @@ void TIM7_IRQHandler(void)
   }
   num++;
   /* USER CODE END TIM7_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim7);
   /* USER CODE BEGIN TIM7_IRQn 1 */
 
   /* USER CODE END TIM7_IRQn 1 */
