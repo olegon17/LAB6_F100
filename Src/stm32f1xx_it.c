@@ -219,7 +219,7 @@ void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
   LL_ADC_ClearFlag_EOS(ADC1);//????? ????? ????????? ??????????????
-  ADC32_1[1] = LL_ADC_REG_ReadConversionData12(ADC1);
+  ADC_RESULT = LL_ADC_REG_ReadConversionData12(ADC1);
   /* USER CODE END ADC1_IRQn 0 */
   /* USER CODE BEGIN ADC1_IRQn 1 */
 
@@ -248,11 +248,14 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 0 */
   LL_TIM_ClearFlag_UPDATE(TIM2);
   LL_ADC_REG_StartConversionSWStart(ADC1); // zapusk preobrazovani^ ACP
-  ADC32_1[0]=INPUT;
-    U0=ADC32_1[0];
-    Uoc=ADC32_1[1];
+  
+    U0=INPUT;
+    Uoc=ADC_RESULT;
+    Xiold=Xi;
     Xi=U0-Uoc;
-    Uy=Xi*Kp+Uy;
+    K1=(Kp*(To+2*Tu))/2*Tu;
+    K2=(Kp*(To-2*Tu))/2*Tu;
+    Uy=Xi*K1-Xiold*K2+Uy;
     if(Uy<0)
       Uy=0;
     if(Uy>3199)
@@ -260,17 +263,17 @@ void TIM2_IRQHandler(void)
  LL_TIM_OC_SetCompareCH3(TIM2, Uy);
  if(DISP_MODE==0)
  {
- D1=(ADC32_1[0])/1000%10;
- D2=(ADC32_1[0])/100%10;
- D3=(ADC32_1[0])/10%10;
- D4=(ADC32_1[0])/1%10;
+ D1=(INPUT)/1000%10;
+ D2=(INPUT)/100%10;
+ D3=(INPUT)/10%10;
+ D4=(INPUT)/1%10;
  }
  if(DISP_MODE==1)
  {
- D1=(ADC32_1[1])/1000%10;
- D2=(ADC32_1[1])/100%10;
- D3=(ADC32_1[1])/10%10;
- D4=(ADC32_1[1])/1%10;
+ D1=(ADC_RESULT)/1000%10;
+ D2=(ADC_RESULT)/100%10;
+ D3=(ADC_RESULT)/10%10;
+ D4=(ADC_RESULT)/1%10;
  }
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */

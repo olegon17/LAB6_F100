@@ -16,8 +16,8 @@
 
 #define INPUT 2580
 #define DELITEL 5
-extern volatile int D1,D2,D3,D4,num,ADC_RANG_1_2,Kp,Uy,U0,Uoc,Xi,DISP_MODE;
-extern volatile short ADC32_1[2];
+extern volatile int D1,D2,D3,D4,num,Kp,Uy,U0,Uoc,Xi,To,Tu,K1,K2,Xiold,DISP_MODE;
+extern volatile short ADC_RESULT;
 
 
 static void show(int digit)
